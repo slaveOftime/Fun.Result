@@ -36,14 +36,46 @@ module AsyncOptionComputationExpression =
 
     type AsyncOptionBuilder() = 
         member __.Return(x) = x |> Some |> Async.retn
-
+        member __.ReturnFrom(x) = x
         member __.Bind(x, f) =
             async {
                 match! x with
                 | Some x -> return! f x
                 | None -> return None
             }
+        member this.Zero() = this.Return()
+        member __.Delay(f) = f
+        member __.Run(f) = f()
 
-        member __.ReturnFrom(x) = x
+        member this.While(guard, body) =
+            if not (guard()) then this.Zero()
+            else this.Bind(body(), fun () -> this.While(guard, body))
+
+        member this.TryWith(body, handler) =
+            try
+                this.ReturnFrom(body())
+            with e -> handler e
+
+        member this.TryFinally(body, compensation) =
+            try
+                this.ReturnFrom(body())
+            finally
+                compensation()
+
+        member this.Using(disposable : #System.IDisposable, body) =
+            let body' = fun () -> body disposable
+            this.TryFinally(body',
+                            fun () ->
+                                match disposable with
+                                | null -> ()
+                                | disp -> disp.Dispose())
+
+        member this.For(sequence : seq<_>, body) =
+            this.Using
+                (sequence.GetEnumerator(),
+                 fun enum ->
+                     this.While
+                         (enum.MoveNext, this.Delay(fun () -> body enum.Current)))
+        member this.Combine(a, b) = this.Bind(a, fun () -> b())
 
     let asyncOption = AsyncOptionBuilder()
