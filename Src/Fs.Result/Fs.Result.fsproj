@@ -1,11 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
     <Authors>slaveoftime</Authors>
     <Description>This is a help class library inspired by the sample code from the Scott Wlaschin's book `**Domain Modeling Made Functional** - Tackle Software Complexity with Domain-Driven Design and F#`.
 I use this to make Domain Drive Design more clean.</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fs.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fs.Result</RepositoryUrl>
+    <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Result.fs" />
