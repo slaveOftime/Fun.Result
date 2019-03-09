@@ -51,6 +51,16 @@ module AsyncResult =
             | Error err -> return (Error err)
         }
 
+    let bindError (f : _ -> Async<_>) (xAsyncResult : AsyncResult<_, _>) : AsyncResult<_, _> =
+        async {
+            let! xResult = xAsyncResult
+            match xResult with
+            | Ok x -> return Ok x
+            | Error e -> 
+                let! err = f e
+                return (Error err)
+        }
+
     /// Convert a list of AsyncResult into a AsyncResult<list> using monadic style.
     /// Only the first error is returned. The error type need not be a list.
     let sequenceM resultList =
