@@ -31,6 +31,19 @@ module Async =
     let pass f = map (fun x -> f; x)
 
 
+    let sequence<'T> (asyncs: Async<'T> seq) =
+        let state: 'T seq = [] |> Seq.ofList
+        asyncs
+        |> Seq.fold
+            (fun s x -> 
+                async {
+                    let! s' = s
+                    let! x' = x
+                    return Seq.append [x'] s'
+                })
+            (async { return state })
+
+
 [<AutoOpen>]
 module AsyncOptionComputationExpression = 
 
