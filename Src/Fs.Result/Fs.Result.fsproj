@@ -11,6 +11,7 @@ I use this to make Domain Drive Design more clean.</Description>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Result.fs" />
+    <Compile Include="Option.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
