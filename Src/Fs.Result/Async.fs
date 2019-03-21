@@ -42,6 +42,7 @@ module Async =
                     return Seq.append [x'] s'
                 })
             (async { return state })
+        |> map Seq.rev
 
 
 [<AutoOpen>]
