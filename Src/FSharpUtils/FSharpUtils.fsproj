@@ -3,11 +3,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>true</IsPackable>
     <Authors>slaveoftime</Authors>
-    <Description>This is a help class library inspired by the sample code from the Scott Wlaschin's book `**Domain Modeling Made Functional** - Tackle Software Complexity with Domain-Driven Design and F#`.
-I use this to make Domain Drive Design more clean.</Description>
+    <Description>* This is very opinionated project
+* Will make it compatible for both Fable and .NET
+* Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fs.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fs.Result</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>2.0.0-beta</Version>
+    <Product>Slaveoftime.FSharpUtils</Product>
+    <AssemblyName>Slaveoftime.FSharpUtils</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common.fs" />
