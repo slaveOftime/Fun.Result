@@ -1,4 +1,4 @@
-namespace global
+namespace FSharpUtils
 
 [<RequireQualifiedAccess>]
 module Async =

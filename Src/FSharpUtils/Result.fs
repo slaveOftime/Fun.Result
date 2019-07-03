@@ -1,4 +1,4 @@
-namespace global
+namespace FSharpUtils
 
 
 [<RequireQualifiedAccess>]
@@ -108,6 +108,10 @@ module Result =
 
     /// Run a unit in the map pipeline without input
     let pass f = map (fun x -> f; x)
+
+    let catch errorMap f x =
+        try f x
+        with ex -> errorMap ex |> Error
 
 
 [<AutoOpen>]

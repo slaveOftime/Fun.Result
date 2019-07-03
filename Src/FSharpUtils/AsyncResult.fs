@@ -1,4 +1,5 @@
-namespace global
+namespace FSharpUtils
+
 
 type AsyncResult<'Success, 'Failure> = Async<Result<'Success, 'Failure>>
 
