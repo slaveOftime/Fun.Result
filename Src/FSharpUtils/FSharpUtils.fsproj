@@ -8,7 +8,7 @@
 * Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fs.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fs.Result</RepositoryUrl>
-    <Version>2.0.0-beta</Version>
+    <Version>2.0.0-beta1</Version>
     <Product>Slaveoftime.FSharpUtils</Product>
     <AssemblyName>Slaveoftime.FSharpUtils</AssemblyName>
   </PropertyGroup>
@@ -19,5 +19,9 @@
     <Compile Include="Validation.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
+  </ItemGroup>
+  <!-- Add source files to "fable" folder in Nuget package -->
+  <ItemGroup>
+    <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
 </Project>
