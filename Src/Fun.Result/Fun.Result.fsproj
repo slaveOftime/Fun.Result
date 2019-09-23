@@ -6,11 +6,12 @@
     <Description>* This is very opinionated project
 * Will make it compatible for both Fable and .NET
 * Will continue to add more genral util functions</Description>
-    <PackageProjectUrl>https://github.com/albertwoo/Fs.Result</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/albertwoo/Fs.Result</RepositoryUrl>
-    <Version>2.0.0-beta1</Version>
-    <Product>Slaveoftime.FSharpUtils</Product>
-    <AssemblyName>Slaveoftime.FSharpUtils</AssemblyName>
+    <PackageProjectUrl>https://github.com/albertwoo/Fun.Result</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
+    <Version>1.0.0-beta2</Version>
+    <Product>Fun.Result</Product>
+    <AssemblyName>Fun.Result</AssemblyName>
+    <Company>https://www.slaveoftime.fun</Company>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="SafeString.fs" />
