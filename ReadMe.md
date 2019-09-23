@@ -1,4 +1,4 @@
-# FSharpUtils
+# Fun.Result
 * This is very opinionated project
 * Will make it compatible for both Fable and .NET
 * Will continue to add more genral util functions
