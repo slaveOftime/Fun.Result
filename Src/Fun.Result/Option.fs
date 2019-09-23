@@ -1,4 +1,4 @@
-﻿namespace FSharpUtils
+﻿namespace Fun.Result
 
 
 [<AutoOpen>]

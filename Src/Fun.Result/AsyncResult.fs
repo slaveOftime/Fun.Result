@@ -1,4 +1,4 @@
-namespace FSharpUtils
+namespace Fun.Result
 
 
 type AsyncResult<'Success, 'Failure> = Async<Result<'Success, 'Failure>>
