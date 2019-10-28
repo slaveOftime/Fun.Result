@@ -14,15 +14,14 @@
     <Company>https://www.slaveoftime.fun</Company>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Comparison.fs" />
     <Compile Include="SafeString.fs" />
     <Compile Include="Result.fs" />
     <Compile Include="Option.fs" />
     <Compile Include="Validation.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
-  </ItemGroup>
-  <!-- Add source files to "fable" folder in Nuget package -->
-  <ItemGroup>
+    <!-- Add source files to "fable" folder in Nuget package -->
     <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
   <ItemGroup>
