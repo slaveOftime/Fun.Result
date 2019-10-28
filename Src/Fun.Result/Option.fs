@@ -1,6 +1,11 @@
 ﻿namespace Fun.Result
 
 
+module Option =
+    let ofTrue = function true -> Some() | false -> None
+    let ofFalse = function false -> Some() | true -> None
+
+
 [<AutoOpen>]
 module OptionComputationExpression =
     type OptionBuilder() =
