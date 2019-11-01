@@ -2,26 +2,26 @@
 
 [<AutoOpen>]
 module Comparison =
-    let (|NumBetween|_|) min max x =
+    let (|Between|_|) min max x =
         if x > min && x < max then Some()
         else None
 
-    let (|NumBetweenE|_|) min max x =
+    let (|BetweenEqual|_|) min max x =
         if x >= min && x <= max then Some()
         else None
 
-    let (|SmallThan|) value x =
+    let (|LessThan|) value x =
         if x < value then Some()
         else None
 
-    let (|SmallEqual|) value x =
+    let (|LessEqual|) value x =
         if x <= value then Some()
         else None
 
-    let (|LargeThan|) value x =
+    let (|GreaterThan|) value x =
         if x > value then Some()
         else None
 
-    let (|LargeEqual|) value x =
+    let (|GreaterEqual|) value x =
         if x >= value then Some()
         else None
