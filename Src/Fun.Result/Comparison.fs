@@ -10,18 +10,18 @@ module Comparison =
         if x >= min && x <= max then Some()
         else None
 
-    let (|LessThan|) value x =
+    let (|LessThan|_|) value x =
         if x < value then Some()
         else None
 
-    let (|LessEqual|) value x =
+    let (|LessEqual|_|) value x =
         if x <= value then Some()
         else None
 
-    let (|GreaterThan|) value x =
+    let (|GreaterThan|_|) value x =
         if x > value then Some()
         else None
 
-    let (|GreaterEqual|) value x =
+    let (|GreaterEqual|_|) value x =
         if x >= value then Some()
         else None
