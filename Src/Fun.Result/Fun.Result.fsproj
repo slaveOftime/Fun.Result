@@ -8,10 +8,11 @@
 * Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fun.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
-    <Version>1.0.1</Version>
+    <Version>1.0.2-beta1</Version>
     <Product>Fun.Result</Product>
     <AssemblyName>Fun.Result</AssemblyName>
     <Company>https://www.slaveoftime.fun</Company>
+    <PackageReleaseNotes>Add Task and TaskResult</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comparison.fs" />
@@ -21,10 +22,13 @@
     <Compile Include="Validation.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
+    <Compile Include="Task.fs" />
+    <Compile Include="TaskResult.fs" />
     <!-- Add source files to "fable" folder in Nuget package -->
     <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="TaskBuilder.fs" Version="2.1.0" />
     <PackageReference Update="FSharp.Core" Version="4.6.0" />
   </ItemGroup>
 </Project>
