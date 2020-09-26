@@ -25,3 +25,5 @@ module Task =
         }
 
     let runSynchronously (t: Task<_>) = t.Wait(); t.Result
+
+    let retn x = Task.FromResult x

@@ -2,7 +2,6 @@ module Tests
 
 open System.Net.Http
 open System.Diagnostics
-open System.Threading.Tasks
 open FSharp.Control.Tasks
 open Xunit
 open Fun.Result
@@ -10,7 +9,7 @@ open Fun.Result
 
 [<Fact>]
 let ``Task map`` () =
-    Task.FromResult 12
+    Task.retn 12
     |> Task.map ((*) 2)
     |> Task.runSynchronously
     |> fun x ->
@@ -46,3 +45,54 @@ let ``HttpClient`` () =
     |> function
         | Ok x -> Assert.True(x > 0)
         | Error x -> Assert.True(x > 400)
+
+
+[<Fact>]
+let ``SafeStringEndWith test`` () =
+    match "123ends" with
+    | SafeStringEndWith "ends" -> ()
+    | _ -> failwith "SafeStringEndWith failed"
+
+    match "123ends" with
+    | SafeStringEndWith "Ends" -> failwith "Case ignore is not correctly"
+    | _ -> ()
+
+
+[<Fact>]
+let ``SafeStringEndWithCi test`` () =
+    match "123ends" with
+    | SafeStringEndWithCi "ends" -> ()
+    | _ -> failwith "SafeStringEndWithCi failed"
+
+    match "123ends" with
+    | SafeStringEndWithCi "EnDs" -> ()
+    | _ -> failwith "SafeStringEndWithCi failed"
+   
+
+[<Fact>]
+let ``SafeStringStartWith test`` () =
+    match "start123" with
+    | SafeStringStartWith "start" -> ()
+    | _ -> failwith "SafeStringStartWith failed"
+
+    match "123ends" with
+    | SafeStringStartWith "Ends" -> failwith "Case ignore is not correctly"
+    | _ -> ()
+
+
+[<Fact>]
+let ``SafeStringStartWithCi test`` () =
+    match "start123" with
+    | SafeStringStartWithCi "start" -> ()
+    | _ -> failwith "SafeStringStartWithCi failed"
+
+    match "start123" with
+    | SafeStringStartWithCi "sTart" -> ()
+    | _ -> failwith "SafeStringStartWithCi failed"
+
+
+[<Fact>]
+let ``SafeStringHead test`` () =
+    match "123tail" with
+    | SafeStringHead "tail" x -> Assert.Equal("123", x)
+    | _ -> failwith "SafeStringHead failed"

@@ -27,6 +27,42 @@ module SafeStringDsl =
         | NullOrEmptyString ->
             None
 
+    let (|SafeStringHead|_|) tail = function
+        | SafeString x ->
+            if String.IsNullOrEmpty tail |> not && x.EndsWith(tail, StringComparison.OrdinalIgnoreCase)
+            then Some (x.Substring(0, x.Length - tail.Length))
+            else None
+        | NullOrEmptyString ->
+            None
+
+    let (|SafeStringEndWith|_|) ends = function
+        | SafeString x ->
+            if x.EndsWith(ends) then Some()
+            else None
+        | NullOrEmptyString ->
+            None
+
+    let (|SafeStringEndWithCi|_|) ends = function
+        | SafeString x ->
+            if x.EndsWith(ends, StringComparison.OrdinalIgnoreCase) then Some()
+            else None
+        | NullOrEmptyString ->
+            None
+
+    let (|SafeStringStartWith|_|) ends = function
+        | SafeString x ->
+            if x.StartsWith(ends) then Some()
+            else None
+        | NullOrEmptyString ->
+            None
+
+    let (|SafeStringStartWithCi|_|) ends = function
+        | SafeString x ->
+            if x.StartsWith(ends, StringComparison.OrdinalIgnoreCase) then Some()
+            else None
+        | NullOrEmptyString ->
+            None
+
 
 [<RequireQualifiedAccess>]
 module SafeString =
