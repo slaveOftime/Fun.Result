@@ -35,30 +35,30 @@ module SafeStringDsl =
         | NullOrEmptyString ->
             None
 
-    let (|SafeStringEndWith|_|) ends = function
+    let (|SafeStringEndWith|_|) (ends: string) = function
         | SafeString x ->
             if x.EndsWith(ends) then Some()
             else None
         | NullOrEmptyString ->
             None
 
-    let (|SafeStringEndWithCi|_|) ends = function
+    let (|SafeStringEndWithCi|_|) (ends: string) = function
         | SafeString x ->
             if x.EndsWith(ends, StringComparison.OrdinalIgnoreCase) then Some()
             else None
         | NullOrEmptyString ->
             None
 
-    let (|SafeStringStartWith|_|) ends = function
+    let (|SafeStringStartWith|_|) (start: string) = function
         | SafeString x ->
-            if x.StartsWith(ends) then Some()
+            if x.StartsWith(start) then Some()
             else None
         | NullOrEmptyString ->
             None
 
-    let (|SafeStringStartWithCi|_|) ends = function
+    let (|SafeStringStartWithCi|_|) (start: string) = function
         | SafeString x ->
-            if x.StartsWith(ends, StringComparison.OrdinalIgnoreCase) then Some()
+            if x.StartsWith(start, StringComparison.OrdinalIgnoreCase) then Some()
             else None
         | NullOrEmptyString ->
             None
