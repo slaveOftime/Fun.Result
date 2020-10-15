@@ -8,11 +8,11 @@
 * Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fun.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Product>Fun.Result</Product>
     <AssemblyName>Fun.Result</AssemblyName>
     <Company>https://www.slaveoftime.fun</Company>
-    <PackageReleaseNotes>Add type annotation</PackageReleaseNotes>
+    <PackageReleaseNotes>Add Deferred</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comparison.fs" />
@@ -23,7 +23,8 @@
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
     <Compile Include="Task.fs" />
-    <Compile Include="TaskResult.fs" />
+	<Compile Include="TaskResult.fs" />
+	<Compile Include="Deferred.fs" />
     <!-- Add source files to "fable" folder in Nuget package -->
     <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
