@@ -107,7 +107,7 @@ module AsyncResult =
         |> Async.AwaitTask
         |> ofAsync
 
-    let sleep ms = Async.Sleep ms |> ofAsync
+    let sleep (ms: int) = Async.Sleep ms |> ofAsync
 
     let bindAsync f x =
         x
