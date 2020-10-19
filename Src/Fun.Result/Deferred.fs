@@ -2,7 +2,7 @@
 
 
 [<RequireQualifiedAccess>]
-type Deferred<'T, 'Error> =
+type DeferredState<'T, 'Error> =
     | NotStartYet
     | Loading
     | Loaded of 'T
@@ -12,9 +12,9 @@ type Deferred<'T, 'Error> =
 
     member this.Value =
         match this with
-        | Deferred.Loaded x 
-        | Deferred.Reloading x
-        | Deferred.ReloadFailed (x, _) -> Some x
+        | DeferredState.Loaded x 
+        | DeferredState.Reloading x
+        | DeferredState.ReloadFailed (x, _) -> Some x
         | _ -> None
 
     member this.IsLoadingNow =
@@ -42,18 +42,18 @@ type Deferred<'T, 'Error> =
 
 
 [<RequireQualifiedAccess>]
-module Deferred =
+module DeferredState =
     let ofOption data =
         match data with
-        | Some x -> Deferred.Loaded x
-        | None -> Deferred.NotStartYet
+        | Some x -> DeferredState.Loaded x
+        | None -> DeferredState.NotStartYet
 
-    let toOption (data: Deferred<_, _>) = data.Value
+    let toOption (data: DeferredState<_, _>) = data.Value
 
     let ofResult data =
         match data with
-        | Ok x -> Deferred.Loaded x
-        | Error e -> Deferred.LoadFailed e
+        | Ok x -> DeferredState.Loaded x
+        | Error e -> DeferredState.LoadFailed e
 
 
 
