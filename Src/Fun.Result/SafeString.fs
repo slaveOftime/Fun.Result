@@ -63,6 +63,28 @@ module SafeStringDsl =
         | NullOrEmptyString ->
             None
 
+    let(|INT32|_|) (str: string) =
+        match Int32.TryParse str with
+        | true, x -> Some x
+        | _ -> None
+
+    let(|INT64|_|) (str: string) =
+        match Int64.TryParse str with
+        | true, x -> Some x
+        | _ -> None
+
+    let(|FLOAT|_|) (str: string) =
+        try
+            Convert.ToDouble(str) |> Some
+        with _ ->
+            None
+
+    let(|DECIMAL|_|) (str: string) =
+        try
+            Convert.ToDecimal(str) |> Some
+        with _ ->
+            None
+
 
 [<RequireQualifiedAccess>]
 module SafeString =
