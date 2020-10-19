@@ -96,3 +96,21 @@ let ``SafeStringHead test`` () =
     match "123tail" with
     | SafeStringHead "tail" x -> Assert.Equal("123", x)
     | _ -> failwith "SafeStringHead failed"
+
+
+[<Fact>]
+let ``SafeStringTail test`` () =
+    match "123tail" with
+    | SafeStringTail "123" x -> Assert.Equal("tail", x)
+    | _ -> failwith "SafeStringTail failed"
+
+    match "123" with
+    | SafeStringTail "123" x -> Assert.Equal("", x)
+    | _ -> failwith "SafeStringTail failed"
+
+
+[<Fact>]
+let ``SafeStringTail with INT32`` () =
+    match "+123" with
+    | SafeStringTail "+" (INT32 x) -> Assert.Equal(123, x)
+    | _ -> failwith "SafeStringHead failed"

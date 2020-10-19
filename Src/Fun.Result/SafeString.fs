@@ -26,11 +26,21 @@ module SafeStringDsl =
             else Some (x, "")
         | NullOrEmptyString ->
             None
-
+            
+    /// Given the tail and extract the head
     let (|SafeStringHead|_|) tail = function
         | SafeString x ->
             if String.IsNullOrEmpty tail |> not && x.EndsWith(tail, StringComparison.OrdinalIgnoreCase)
             then Some (x.Substring(0, x.Length - tail.Length))
+            else None
+        | NullOrEmptyString ->
+            None
+
+    /// Given the head and extract the tail
+    let (|SafeStringTail|_|) head = function
+        | SafeString x ->
+            if String.IsNullOrEmpty head |> not && x.StartsWith(head, StringComparison.OrdinalIgnoreCase)
+            then Some (x.Substring(head.Length))
             else None
         | NullOrEmptyString ->
             None
