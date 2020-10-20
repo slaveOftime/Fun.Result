@@ -8,11 +8,11 @@
 * Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fun.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <Product>Fun.Result</Product>
     <AssemblyName>Fun.Result</AssemblyName>
     <Company>https://www.slaveoftime.fun</Company>
-    <PackageReleaseNotes>Add Deferred</PackageReleaseNotes>
+    <PackageReleaseNotes>Hide ofTask for Fable</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comparison.fs" />

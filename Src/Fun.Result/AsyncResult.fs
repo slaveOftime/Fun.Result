@@ -102,10 +102,12 @@ module AsyncResult =
     /// Lift a Async into an AsyncResult
     let ofAsync x : AsyncResult<_, _> = x |> Async.map Result.Ok
 
+    #if !FABLE_COMPILER
     let ofTask x : AsyncResult<_, _> =
         x
         |> Async.AwaitTask
         |> ofAsync
+    #endif
 
     let sleep (ms: int) = Async.Sleep ms |> ofAsync
 
