@@ -114,3 +114,19 @@ let ``SafeStringTail with INT32`` () =
     match "+123" with
     | SafeStringTail "+" (INT32 x) -> Assert.Equal(123, x)
     | _ -> failwith "SafeStringHead failed"
+
+[<Fact>]
+let ``Option tests`` () =
+    option {
+        do! Some ()
+    }
+    |> function
+        | Some x -> Assert.Equal((), x)
+        | None -> failwith "Zero function is not correct"
+
+    option {
+        do! None
+    }
+    |> function
+        | None -> ()
+        | Some _ -> failwith "Zero function is not correct"

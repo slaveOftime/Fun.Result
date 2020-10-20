@@ -13,5 +13,6 @@ module OptionComputationExpression =
         member __.ReturnFrom(x) = x
         member __.Bind(x, f) = Option.bind f x
         member __.Delay(f) = f()
+        member __.Zero() = Some ()
 
     let option = OptionBuilder()
