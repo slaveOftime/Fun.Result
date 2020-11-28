@@ -1,6 +1,6 @@
-﻿#if !FABLE_COMPILER
+﻿namespace Fun.Result
 
-namespace Fun.Result
+#if !FABLE_COMPILER
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
