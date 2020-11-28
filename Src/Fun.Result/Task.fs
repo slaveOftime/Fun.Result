@@ -1,4 +1,6 @@
-﻿namespace Fun.Result
+﻿#if !FABLE_COMPILER
+
+namespace Fun.Result
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
@@ -27,3 +29,5 @@ module Task =
     let runSynchronously (t: Task<_>) = t.Wait(); t.Result
 
     let retn x = Task.FromResult x
+
+#endif

@@ -1,4 +1,6 @@
-﻿namespace Fun.Result
+﻿#if !FABLE_COMPILER
+
+namespace Fun.Result
 
 open System.Threading.Tasks
 open FSharp.Control.Tasks
@@ -96,3 +98,5 @@ module TaskResultComputationExpression =
         member this.Combine(a, b) = this.Bind(a, fun () -> b())
 
     let taskResult = TaskResultBuilder()
+
+#endif
