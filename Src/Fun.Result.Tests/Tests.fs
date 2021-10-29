@@ -2,7 +2,6 @@ module Tests
 
 open System.Net.Http
 open System.Diagnostics
-open FSharp.Control.Tasks
 open Xunit
 open Fun.Result
 

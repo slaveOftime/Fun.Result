@@ -3,7 +3,6 @@
 #if !FABLE_COMPILER
 
 open System.Threading.Tasks
-open FSharp.Control.Tasks
 
 
 [<RequireQualifiedAccess>]
@@ -24,6 +23,11 @@ module Task =
         task {
             do! Task.Delay ms
             return! t
+        }
+
+    let toUnitTask (t: Task) =
+        task {
+            do! t
         }
 
     let runSynchronously (t: Task<_>) = t.Wait(); t.Result

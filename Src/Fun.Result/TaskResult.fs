@@ -3,7 +3,6 @@
 #if !FABLE_COMPILER
 
 open System.Threading.Tasks
-open FSharp.Control.Tasks
 
 
 type TaskResult<'Success, 'Failure> = Task<Result<'Success, 'Failure>>
@@ -49,6 +48,12 @@ module TaskResult =
         }
 
     let ofTask (x: Task<_>): TaskResult<_, _> = x |> Task.map Ok
+
+    let ofEmptyTask (x: Task): TaskResult<_, _> =
+        task {
+            do! x
+            return Ok()
+        }
     
     let bindTask f x = x |> ofTask |> bind f
 
