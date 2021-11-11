@@ -2,7 +2,9 @@ module Tests
 
 open System.Net.Http
 open System.Diagnostics
+open System.Threading.Tasks
 open Xunit
+open FsUnit.Xunit.Typed
 open Fun.Result
 
 
@@ -17,16 +19,19 @@ let ``Task map`` () =
 
 [<Fact>]
 let ``TaskResult basic`` () =
-    let sw = Stopwatch.StartNew()
-    taskResult {
-        let x = 1
-        return x + 1
+    task {
+        let sw = Stopwatch.StartNew()
+
+        let! result =
+            taskResult {
+                let! _ = TaskResult.ofSuccess 1
+                do! Task.Delay 1000
+                return 1 + 1
+            }
+    
+        sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
+        result |> should equal (Ok 2)
     }
-    |> Task.sleep 1000
-    |> Task.runSynchronously
-    |> fun x ->
-        Assert.True(sw.ElapsedMilliseconds > 900L)
-        Assert.Equal(Ok 2, x)
 
 
 [<Fact>]

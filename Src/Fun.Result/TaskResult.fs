@@ -64,14 +64,15 @@ module TaskResult =
 module TaskResultComputationExpression =
     type TaskResultBuilder() =
         member __.Return(x) = TaskResult.retn x
-        member __.Bind(x, f) = TaskResult.bind f x
+        member __.Bind(x: TaskResult<_, _>, f) = TaskResult.bind f x
+        member __.Bind(x: Task, f) = TaskResult.ofEmptyTask x |> TaskResult.bind f
         member __.ReturnFrom(x) = x
         member __.Delay(f) = f
         member __.Run(f) = f()
 
         member this.Zero() = this.Return()
 
-        member this.While(guard, body) =
+        member this.While(guard, body: unit -> TaskResult<_, _>) =
             if not (guard()) then this.Zero()
             else this.Bind(body(), fun () -> this.While(guard, body))
 
@@ -100,7 +101,7 @@ module TaskResultComputationExpression =
                  fun enum ->
                      this.While
                          (enum.MoveNext, this.Delay(fun () -> body enum.Current)))
-        member this.Combine(a, b) = this.Bind(a, fun () -> b())
+        member this.Combine(a: TaskResult<_, _>, b) = this.Bind(a, fun () -> b())
 
     let taskResult = TaskResultBuilder()
 
