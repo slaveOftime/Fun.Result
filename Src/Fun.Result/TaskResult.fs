@@ -65,7 +65,6 @@ module TaskResultComputationExpression =
     type TaskResultBuilder() =
         member __.Return(x) = TaskResult.retn x
         member __.Bind(x: TaskResult<_, _>, f) = TaskResult.bind f x
-        member __.Bind(x: Task, f) = TaskResult.ofEmptyTask x |> TaskResult.bind f
         member __.ReturnFrom(x) = x
         member __.Delay(f) = f
         member __.Run(f) = f()

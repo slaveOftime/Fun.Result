@@ -25,9 +25,9 @@ let ``TaskResult basic`` () =
         let! result =
             taskResult {
                 let! _ = TaskResult.ofSuccess 1
-                do! Task.Delay 1000
                 return 1 + 1
             }
+            |> Task.sleep 1000
     
         sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
         result |> should equal (Ok 2)
