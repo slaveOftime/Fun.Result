@@ -12,7 +12,7 @@ type DeferredState<'T, 'Error> =
 
     member this.Value =
         match this with
-        | DeferredState.Loaded x 
+        | DeferredState.Loaded x
         | DeferredState.Reloading x
         | DeferredState.ReloadFailed (x, _) -> Some x
         | _ -> None
@@ -29,7 +29,7 @@ type DeferredState<'T, 'Error> =
         | ReloadFailed (_, e) -> Some e
         | _ -> None
 
-    member this.StartLoad () =
+    member this.StartLoad() =
         match this with
         | Loaded x
         | ReloadFailed (x, _) -> Reloading x
@@ -37,7 +37,7 @@ type DeferredState<'T, 'Error> =
 
     member this.WithError e =
         match this with
-        | Reloading x -> ReloadFailed (x, e)
+        | Reloading x -> ReloadFailed(x, e)
         | _ -> LoadFailed e
 
 
@@ -80,3 +80,60 @@ module DeferredOperation =
         match data with
         | Ok x -> DeferredOperation.Finished x
         | Error e -> DeferredOperation.Failed e
+
+
+
+[<RequireQualifiedAccess>]
+type LoadingState<'T> =
+    | NotStartYet
+    | Loading
+    | Loaded of 'T
+    | Reloading of 'T
+
+    member this.Value =
+        match this with
+        | Loaded x
+        | Reloading x -> Some x
+        | _ -> None
+
+    member this.IsLoadingNow =
+        match this with
+        | Loading
+        | Reloading _ -> true
+        | _ -> false
+
+
+[<RequireQualifiedAccess>]
+module LoadingState =
+
+    let map fn state =
+        match state with
+        | LoadingState.NotStartYet -> LoadingState.NotStartYet
+        | LoadingState.Loading -> LoadingState.Loading
+        | LoadingState.Loaded x -> fn x |> LoadingState.Loaded
+        | LoadingState.Reloading x -> fn x |> LoadingState.Reloading
+
+
+    let start state =
+        match state with
+        | LoadingState.Loaded x
+        | LoadingState.Reloading x -> LoadingState.Reloading x
+        | _ -> LoadingState.Loading
+
+
+    let ofResult x =
+        match x with
+        | Ok x -> LoadingState.Loaded x
+        | Error _ -> LoadingState.NotStartYet
+
+    let ofOption x =
+        match x with
+        | Some x -> LoadingState.Loaded x
+        | None -> LoadingState.NotStartYet
+
+    let toOption x =
+        match x with
+        | LoadingState.Loaded x
+        | LoadingState.Reloading x -> Some x
+        | LoadingState.NotStartYet
+        | LoadingState.Loading -> None
