@@ -110,16 +110,14 @@ module LoadingState =
         match state with
         | LoadingState.NotStartYet -> LoadingState.NotStartYet
         | LoadingState.Loading -> LoadingState.Loading
-        | LoadingState.Loaded x -> fn x |> LoadingState.Loaded
-        | LoadingState.Reloading x -> fn x |> LoadingState.Reloading
-
+        | LoadingState.Loaded x -> LoadingState.Loaded(fn x)
+        | LoadingState.Reloading x -> LoadingState.Reloading(fn x)
 
     let start state =
         match state with
         | LoadingState.Loaded x
         | LoadingState.Reloading x -> LoadingState.Reloading x
         | _ -> LoadingState.Loading
-
 
     let ofResult x =
         match x with
