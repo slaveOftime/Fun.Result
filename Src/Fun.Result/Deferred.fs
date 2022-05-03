@@ -139,7 +139,7 @@ module LoadingState =
     /// Get the value and an indicator for isLoading
     let unzip defaultValue x =
         match x with
-        | LoadingState.Loaded x
-        | LoadingState.Reloading x -> x, false
-        | LoadingState.NotStartYet
+        | LoadingState.Loaded x -> x, false
+        | LoadingState.Reloading x -> x, true
+        | LoadingState.NotStartYet -> defaultValue, false
         | LoadingState.Loading -> defaultValue, true
