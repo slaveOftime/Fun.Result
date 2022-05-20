@@ -1,9 +1,12 @@
 name: Build and publish nuget packages
 
 on:
+  #push:
+  #  branches:
+  #  - master
   release:
-    types:
-      - published
+    types: [published]
+    
 
 jobs:
   build:
@@ -12,19 +15,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.x'
-        include-prerelease: true
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-    - name: Publish NuGet
-      uses: brandedoutcast/publish-nuget@v2.5.5
-      with:
-          PROJECT_FILE_PATH: Src/Fun.Result/Fun.Result.fsproj
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        dotnet-version: 6.0.x
+        
+    - name: Run tests
+      run: dotnet test      
+
+    - name: Publish nuget packages
+      run: |
+        dotnet pack -c Release Src/Fun.Result/Fun.Result.fsproj -o .
+        dotnet nuget push *.nupkg -s https://api.nuget.org/v3/index.json -k ${{secrets.NUGET_API_KEY}} --skip-duplicate
+    
