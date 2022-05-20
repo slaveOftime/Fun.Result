@@ -9,12 +9,7 @@ open Fun.Result
 
 
 [<Fact>]
-let ``Task map`` () =
-    Task.retn 12
-    |> Task.map ((*) 2)
-    |> Task.runSynchronously
-    |> fun x ->
-        Assert.Equal(24, x)
+let ``Task map`` () = Task.retn 12 |> Task.map ((*) 2) |> Task.runSynchronously |> fun x -> Assert.Equal(24, x)
 
 
 [<Fact>]
@@ -28,7 +23,7 @@ let ``TaskResult basic`` () =
                 return 1 + 1
             }
             |> Task.sleep 1000
-    
+
         sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
         result |> should equal (Ok 2)
     }
@@ -39,7 +34,7 @@ let ``HttpClient`` () =
     task {
         use httpClient = new HttpClient()
         let! r = httpClient.GetAsync("https://www.slaveoftime.fun")
-        if int r.StatusCode < 400 then 
+        if int r.StatusCode < 400 then
             return! r.Content.ReadAsStringAsync() |> Task.map Ok
         else
             return r.StatusCode |> int |> Error
@@ -71,7 +66,7 @@ let ``SafeStringEndWithCi test`` () =
     match "123ends" with
     | SafeStringEndWithCi "EnDs" -> ()
     | _ -> failwith "SafeStringEndWithCi failed"
-   
+
 
 [<Fact>]
 let ``SafeStringStartWith test`` () =
@@ -119,18 +114,35 @@ let ``SafeStringTail with INT32`` () =
     | SafeStringTail "+" (INT32 x) -> Assert.Equal(123, x)
     | _ -> failwith "SafeStringHead failed"
 
+
 [<Fact>]
 let ``Option tests`` () =
-    option {
-        do! Some ()
-    }
+    option { do! Some() }
     |> function
         | Some x -> Assert.Equal((), x)
         | None -> failwith "Zero function is not correct"
 
-    option {
-        do! None
-    }
+    option { do! None }
     |> function
         | None -> ()
         | Some _ -> failwith "Zero function is not correct"
+
+
+    let result = None |> Option.defaultWithOption (fun _ -> Some 1)
+    Assert.Equal(Some 1, result)
+
+    let result = Some 0 |> Option.defaultWithOption (fun _ -> Some 1)
+    Assert.Equal(Some 0, result)
+
+    let result = None |> Option.defaultWithOption (fun _ -> None)
+    Assert.Equal(None, result)
+
+
+    let result =
+        option {
+            let! x = Some 1
+            let! y = Some 1
+            let! z = Some 1
+            return x + y + z
+        }
+    Assert.Equal(Some 3, result)

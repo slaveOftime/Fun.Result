@@ -2,17 +2,29 @@
 
 
 module Option =
-    let ofTrue = function true -> Some() | false -> None
-    let ofFalse = function false -> Some() | true -> None
+    let inline ofTrue x =
+        match x with
+        | true -> Some()
+        | false -> None
+
+    let inline ofFalse x =
+        match x with
+        | false -> Some()
+        | true -> None
+
+    let inline defaultWithOption fn x =
+        match x with
+        | None -> fn ()
+        | x -> x
 
 
 [<AutoOpen>]
 module OptionComputationExpression =
     type OptionBuilder() =
-        member __.Return(x) = Some x
-        member __.ReturnFrom(x) = x
-        member __.Bind(x, f) = Option.bind f x
-        member __.Delay(f) = f()
-        member __.Zero() = Some ()
+        member inline _.Return(x) = Some x
+        member inline _.ReturnFrom(x) = x
+        member inline _.Bind(x, [<InlineIfLambda>] f) = Option.bind f x
+        member inline _.Delay([<InlineIfLambda>] f) = f ()
+        member inline _.Zero() = Some()
 
     let option = OptionBuilder()
