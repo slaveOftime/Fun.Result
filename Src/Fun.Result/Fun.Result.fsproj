@@ -10,11 +10,11 @@
     <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
 	<TrimMode>link</TrimMode>
 	<IsTrimmable>true</IsTrimmable>
-    <Version>2.0.5</Version>
+    <Version>2.0.6</Version>
     <Product>Fun.Result</Product>
     <AssemblyName>Fun.Result</AssemblyName>
     <Company>https://www.slaveoftime.fun</Company>
-    <PackageReleaseNotes>Add LoadingState</PackageReleaseNotes>
+    <PackageReleaseNotes>Add map for DeferredState</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comparison.fs" />

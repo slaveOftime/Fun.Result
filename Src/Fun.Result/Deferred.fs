@@ -43,6 +43,16 @@ type DeferredState<'T, 'Error> =
 
 [<RequireQualifiedAccess>]
 module DeferredState =
+
+    let map fn state =
+        match state with
+        | DeferredState.NotStartYet -> DeferredState.NotStartYet
+        | DeferredState.Loading -> DeferredState.Loading
+        | DeferredState.Loaded x -> DeferredState.Loaded(fn x)
+        | DeferredState.LoadFailed e -> DeferredState.LoadFailed e
+        | DeferredState.Reloading x -> DeferredState.Reloading(fn x)
+        | DeferredState.ReloadFailed (x, e) -> DeferredState.ReloadFailed(fn x, e)
+
     let ofOption data =
         match data with
         | Some x -> DeferredState.Loaded x
@@ -56,7 +66,6 @@ module DeferredState =
         | Error e -> DeferredState.LoadFailed e
 
 
-
 [<RequireQualifiedAccess>]
 type DeferredOperation<'T, 'Error> =
     | Start
@@ -66,6 +75,13 @@ type DeferredOperation<'T, 'Error> =
 
 [<RequireQualifiedAccess>]
 module DeferredOperation =
+
+    let map fn operation =
+        match operation with
+        | DeferredOperation.Start -> DeferredOperation.Start
+        | DeferredOperation.Finished x -> DeferredOperation.Finished(fn x)
+        | DeferredOperation.Failed e -> DeferredOperation.Failed e
+
     let ofOption data =
         match data with
         | Some x -> DeferredOperation.Finished x
@@ -80,7 +96,6 @@ module DeferredOperation =
         match data with
         | Ok x -> DeferredOperation.Finished x
         | Error e -> DeferredOperation.Failed e
-
 
 
 [<RequireQualifiedAccess>]
