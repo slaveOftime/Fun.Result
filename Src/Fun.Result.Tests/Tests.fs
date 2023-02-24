@@ -116,6 +116,25 @@ let ``SafeStringTail with INT32`` () =
 
 
 [<Fact>]
+let ``SafeStringExtension should work`` () =
+    match "demo" with
+    | SafeStringExtension(_, _) -> failwith "SafeStringExtension failed"
+    | _ -> ()
+
+    match "demo." with
+    | SafeStringExtension(_, _) -> failwith "SafeStringExtension failed"
+    | _ -> ()
+
+    match "demo.p" with
+    | SafeStringExtension(_, ".p") -> ()
+    | _ -> failwith "SafeStringExtension failed"
+
+    match "demo.P" with
+    | SafeStringExtension(_, ".p") -> ()
+    | _ -> failwith "SafeStringExtension failed"
+
+
+[<Fact>]
 let ``Option tests`` () =
     option { do! Some() }
     |> function

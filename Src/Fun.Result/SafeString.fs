@@ -22,10 +22,10 @@ module SafeStringDsl =
         function
         | SafeString x ->
             let index = x.LastIndexOf '.'
-            if index >= 0 then
+            if index >= 0 && index < x.Length - 1 then
                 Some(x.Substring(0, index), x.Substring(index).ToLower())
             else
-                Some(x, "")
+                None
         | NullOrEmptyString -> None
 
     /// Given the tail and extract the head
@@ -93,6 +93,12 @@ module SafeStringDsl =
     let (|DATETIME|_|) (str: string) =
         try
             Convert.ToDateTime(str) |> Some
+        with
+        | _ -> None
+
+    let (|GUID|_|) (str: string) =
+        try
+            Guid.Parse(str) |> Some
         with
         | _ -> None
 
