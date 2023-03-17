@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Compile Include="Tests.fs" />
+    <Compile Include="TaskResultTests.fs" />
+    <Compile Include="AsyncResultTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

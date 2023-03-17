@@ -1,49 +1,7 @@
 module Tests
 
-open System.Net.Http
-open System.Diagnostics
-open System.Threading.Tasks
 open Xunit
-open FsUnit.Xunit.Typed
 open Fun.Result
-
-
-[<Fact>]
-let ``Task map`` () = Task.retn 12 |> Task.map ((*) 2) |> Task.runSynchronously |> fun x -> Assert.Equal(24, x)
-
-
-[<Fact>]
-let ``TaskResult basic`` () =
-    task {
-        let sw = Stopwatch.StartNew()
-
-        let! result =
-            taskResult {
-                let! _ = TaskResult.ofSuccess 1
-                return 1 + 1
-            }
-            |> Task.sleep 1000
-
-        sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
-        result |> should equal (Ok 2)
-    }
-
-
-[<Fact>]
-let ``HttpClient`` () =
-    task {
-        use httpClient = new HttpClient()
-        let! r = httpClient.GetAsync("https://www.slaveoftime.fun")
-        if int r.StatusCode < 400 then
-            return! r.Content.ReadAsStringAsync() |> Task.map Ok
-        else
-            return r.StatusCode |> int |> Error
-    }
-    |> TaskResult.map (fun x -> x.Length)
-    |> Task.runSynchronously
-    |> function
-        | Ok x -> Assert.True(x > 0)
-        | Error x -> Assert.True(x > 400)
 
 
 [<Fact>]

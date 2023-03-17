@@ -1,5 +1,6 @@
 namespace Fun.Result
 
+open Microsoft.FSharp.Control
 
 type AsyncResult<'Success, 'Failure> = Async<Result<'Success, 'Failure>>
 
@@ -138,15 +139,19 @@ module AsyncResultComputationExpression =
             else this.Bind(body(), fun () -> this.While(guard, body))
 
         member this.TryWith(body, handler) =
-            try
-                this.ReturnFrom(body())
-            with e -> handler e
+            async {
+                try
+                    return! this.ReturnFrom(body())
+                with e -> return! handler e
+            }
 
         member this.TryFinally(body, compensation) =
-            try
                 this.ReturnFrom(body())
-            finally
-                compensation()
+                |> Async.Catch
+                |> Async.map (function
+                    | Choice1Of2 x -> compensation(); x
+                    | Choice2Of2 ex -> compensation(); raise ex
+                )
 
         member this.Using(disposable : #System.IDisposable, body) =
             let body' = fun () -> body disposable
