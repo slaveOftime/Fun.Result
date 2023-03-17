@@ -10,7 +10,7 @@ open Fun.Result
 
 
 [<Fact>]
-let ``Task map`` () = Task.retn 12 |> Task.map ((*) 2) |> Task.runSynchronously |> fun x -> Assert.Equal(24, x)
+let ``Task map`` () = Task.retn 12 |> Task.map ((*) 2) |> Task.runSynchronously |> (fun x -> Assert.Equal(24, x))
 
 
 [<Fact>]
@@ -31,20 +31,19 @@ let ``task for using HttpClient`` () =
 
 
 [<Fact>]
-let ``TaskResult basic`` () =
-    task {
-        let sw = Stopwatch.StartNew()
+let ``TaskResult basic`` () = task {
+    let sw = Stopwatch.StartNew()
 
-        let! result =
-            taskResult {
-                let! _ = TaskResult.ofSuccess 1
-                return 1 + 1
-            }
-            |> Task.sleep 1000
+    let! result =
+        taskResult {
+            let! _ = TaskResult.ofSuccess 1
+            return 1 + 1
+        }
+        |> Task.sleep 1000
 
-        sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
-        result |> should equal (Ok 2)
-    }
+    sw.ElapsedMilliseconds |> should greaterOrEqualThan 1000L
+    result |> should equal (Ok 2)
+}
 
 
 [<Fact>]
@@ -74,7 +73,10 @@ let ``TaskResult try finally`` () =
 [<Fact>]
 let ``TaskResult should handle use correctly`` () = task {
     let mutable calls = Collections.Generic.List()
-    let disposeObj = { new IDisposable with member _.Dispose() = calls.Add(1) }
+    let disposeObj =
+        { new IDisposable with
+            member _.Dispose() = calls.Add(1)
+        }
 
     let! _ = taskResult {
         use _ = disposeObj

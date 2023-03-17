@@ -115,11 +115,10 @@ let ``Option tests`` () =
     Assert.Equal(None, result)
 
 
-    let result =
-        option {
-            let! x = Some 1
-            let! y = Some 1
-            let! z = Some 1
-            return x + y + z
-        }
+    let result = option {
+        let! x = Some 1
+        let! y = Some 1
+        let! z = Some 1
+        return x + y + z
+    }
     Assert.Equal(Some 3, result)

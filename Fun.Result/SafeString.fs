@@ -81,26 +81,26 @@ module SafeStringDsl =
     let (|FLOAT|_|) (str: string) =
         try
             Convert.ToDouble(str) |> Some
-        with
-        | _ -> None
+        with _ ->
+            None
 
     let (|DECIMAL|_|) (str: string) =
         try
             Convert.ToDecimal(str) |> Some
-        with
-        | _ -> None
+        with _ ->
+            None
 
     let (|DATETIME|_|) (str: string) =
         try
             Convert.ToDateTime(str) |> Some
-        with
-        | _ -> None
+        with _ ->
+            None
 
     let (|GUID|_|) (str: string) =
         try
             Guid.Parse(str) |> Some
-        with
-        | _ -> None
+        with _ ->
+            None
 
 
 [<RequireQualifiedAccess>]

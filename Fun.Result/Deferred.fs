@@ -14,7 +14,7 @@ type DeferredState<'T, 'Error> =
         match this with
         | DeferredState.Loaded x
         | DeferredState.Reloading x
-        | DeferredState.ReloadFailed (x, _) -> Some x
+        | DeferredState.ReloadFailed(x, _) -> Some x
         | _ -> None
 
     member this.IsLoadingNow =
@@ -26,13 +26,13 @@ type DeferredState<'T, 'Error> =
     member this.Error =
         match this with
         | LoadFailed e
-        | ReloadFailed (_, e) -> Some e
+        | ReloadFailed(_, e) -> Some e
         | _ -> None
 
     member this.StartLoad() =
         match this with
         | Loaded x
-        | ReloadFailed (x, _) -> Reloading x
+        | ReloadFailed(x, _) -> Reloading x
         | _ -> Loading
 
     member this.WithError e =
@@ -51,7 +51,7 @@ module DeferredState =
         | DeferredState.Loaded x -> DeferredState.Loaded(fn x)
         | DeferredState.LoadFailed e -> DeferredState.LoadFailed e
         | DeferredState.Reloading x -> DeferredState.Reloading(fn x)
-        | DeferredState.ReloadFailed (x, e) -> DeferredState.ReloadFailed(fn x, e)
+        | DeferredState.ReloadFailed(x, e) -> DeferredState.ReloadFailed(fn x, e)
 
     let ofOption data =
         match data with

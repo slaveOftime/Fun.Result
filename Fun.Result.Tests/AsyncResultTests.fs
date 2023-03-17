@@ -21,7 +21,7 @@ let ``AsyncResult try with`` () =
 
 [<Fact>]
 let ``AsyncResult try finally`` () =
-    Assert.ThrowsAny<exn>(fun () -> 
+    Assert.ThrowsAny<exn>(fun () ->
         asyncResult {
             try
                 failwith "fail"
@@ -36,10 +36,13 @@ let ``AsyncResult try finally`` () =
 [<Fact>]
 let ``AsyncResult should handle use correctly`` () =
     let mutable calls = Collections.Generic.List()
-    let disposeObj = { new IDisposable with member _.Dispose() = calls.Add(1) }
+    let disposeObj =
+        { new IDisposable with
+            member _.Dispose() = calls.Add(1)
+        }
 
     asyncResult {
-        use _= disposeObj
+        use _ = disposeObj
         do! Async.Sleep 100 |> Async.map Ok
         calls.Add(2)
     }

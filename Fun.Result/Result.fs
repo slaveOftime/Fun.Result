@@ -13,7 +13,7 @@ module Result =
 
     let bind = Result.bind
 
-    let iter (f : _ -> unit) result = map f result |> ignore
+    let iter (f: _ -> unit) result = map f result |> ignore
 
     /// Apply a Result<fn> to a Result<x> monadically
     let apply fR xR =
@@ -64,10 +64,7 @@ module Result =
         | Error _ -> false
 
     /// Predicate that returns true on failure
-    let isError xR =
-        xR
-        |> isOk
-        |> not
+    let isError xR = xR |> isOk |> not
 
     /// Lift a given predicate into a predicate that works on Results
     let filter pred =
@@ -107,11 +104,17 @@ module Result =
         | Error err -> Some err
 
     /// Run a unit in the map pipeline without input
-    let pass f = map (fun x -> f; x)
+    let pass f =
+        map (fun x ->
+            f
+            x
+        )
 
     let catch errorMap f x =
-        try f x
-        with ex -> errorMap ex |> Error
+        try
+            f x
+        with ex ->
+            errorMap ex |> Error
 
 
 [<AutoOpen>]
@@ -122,37 +125,38 @@ module ResultComputationExpression =
         member __.ReturnFrom(x) = x
         member this.Zero() = this.Return()
         member __.Delay(f) = f
-        member __.Run(f) = f()
+        member __.Run(f) = f ()
 
         member this.While(guard, body) =
-            if not (guard()) then this.Zero()
-            else this.Bind(body(), fun () -> this.While(guard, body))
+            if not (guard ()) then
+                this.Zero()
+            else
+                this.Bind(body (), (fun () -> this.While(guard, body)))
 
         member this.TryWith(body, handler) =
             try
-                this.ReturnFrom(body())
-            with e -> handler e
+                this.ReturnFrom(body ())
+            with e ->
+                handler e
 
         member this.TryFinally(body, compensation) =
             try
-                this.ReturnFrom(body())
+                this.ReturnFrom(body ())
             finally
-                compensation()
+                compensation ()
 
-        member this.Using(disposable : #System.IDisposable, body) =
+        member this.Using(disposable: #System.IDisposable, body) =
             let body' = fun () -> body disposable
-            this.TryFinally(body',
-                            fun () ->
-                                match disposable with
-                                | null -> ()
-                                | disp -> disp.Dispose())
+            this.TryFinally(
+                body',
+                fun () ->
+                    match disposable with
+                    | null -> ()
+                    | disp -> disp.Dispose()
+            )
 
-        member this.For(sequence : seq<_>, body) =
-            this.Using
-                (sequence.GetEnumerator(),
-                 fun enum ->
-                     this.While
-                         (enum.MoveNext, this.Delay(fun () -> body enum.Current)))
-        member this.Combine(a, b) = this.Bind(a, fun () -> b())
+        member this.For(sequence: seq<_>, body) =
+            this.Using(sequence.GetEnumerator(), (fun enum -> this.While(enum.MoveNext, this.Delay(fun () -> body enum.Current))))
+        member this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
 
     let result = new ResultBuilder()
