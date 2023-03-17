@@ -50,3 +50,41 @@ let ``AsyncResult should handle use correctly`` () =
     |> Async.RunSynchronously
 
     calls |> Seq.toList |> should equal [ 2; 1 ]
+
+
+[<Fact>]
+let ``AsyncResultOption should handle use correctly`` () =
+    let mutable calls = Collections.Generic.List()
+    let disposeObj =
+        { new IDisposable with
+            member _.Dispose() = calls.Add(1)
+        }
+
+    asyncResultOption {
+        use _ = disposeObj
+        do! Async.Sleep 100 |> Async.map (Some >> Ok)
+        calls.Add(2)
+    }
+    |> Async.map ignore
+    |> Async.RunSynchronously
+
+    calls |> Seq.toList |> should equal [ 2; 1 ]
+
+
+[<Fact>]
+let ``AsyncOption should handle use correctly`` () =
+    let mutable calls = Collections.Generic.List()
+    let disposeObj =
+        { new IDisposable with
+            member _.Dispose() = calls.Add(1)
+        }
+
+    asyncOption {
+        use _ = disposeObj
+        do! Async.Sleep 100 |> Async.map Some
+        calls.Add(2)
+    }
+    |> Async.map ignore
+    |> Async.RunSynchronously
+
+    calls |> Seq.toList |> should equal [ 2; 1 ]
