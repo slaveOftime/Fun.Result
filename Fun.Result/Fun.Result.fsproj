@@ -4,17 +4,16 @@
     <IsPackable>true</IsPackable>
     <Authors>slaveoftime</Authors>
     <Description>* This is very opinionated project
-* Will make it compatible for both Fable and .NET
-* Will continue to add more genral util functions</Description>
+      * Will make it compatible for both Fable and .NET
+      * Will continue to add more genral util functions</Description>
     <PackageProjectUrl>https://github.com/albertwoo/Fun.Result</PackageProjectUrl>
     <RepositoryUrl>https://github.com/albertwoo/Fun.Result</RepositoryUrl>
-	<TrimMode>link</TrimMode>
-	<IsTrimmable>true</IsTrimmable>
-    <Version>2.0.8</Version>
+    <TrimMode>link</TrimMode>
+    <IsTrimmable>true</IsTrimmable>
     <Product>Fun.Result</Product>
     <AssemblyName>Fun.Result</AssemblyName>
     <Company>https://www.slaveoftime.fun</Company>
-    <PackageReleaseNotes>Fix try with and finally for asyncResult and taskResult</PackageReleaseNotes>
+    <ChangelogFile>../CHANGELOG.md</ChangelogFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Comparison.fs" />
@@ -25,12 +24,13 @@
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
     <Compile Include="Task.fs" />
-	<Compile Include="TaskResult.fs" />
-	<Compile Include="Deferred.fs" />
+    <Compile Include="TaskResult.fs" />
+    <Compile Include="Deferred.fs" />
     <!-- Add source files to "fable" folder in Nuget package -->
     <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="6.0.0" />
+    <PackageReference Condition="'$(Configuration)'=='RELEASE'" Include="Ionide.KeepAChangelog.Tasks" Version="0.1.8" PrivateAssets="all" />
   </ItemGroup>
 </Project>
