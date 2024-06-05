@@ -6,14 +6,14 @@ type AsyncResult<'Success, 'Failure> = Async<Result<'Success, 'Failure>>
 
 [<RequireQualifiedAccess>]
 module AsyncResult =
-    let map f (x: AsyncResult<_, _>) : AsyncResult<_, _> = Async.map (Result.map f) x
-    let mapError f (x: AsyncResult<_, _>) : AsyncResult<_, _> = Async.map (Result.mapError f) x
-    let ignore x = x |> map ignore
+    let inline map f (x: AsyncResult<_, _>) : AsyncResult<_, _> = Async.map (Result.map f) x
+    let inline mapError f (x: AsyncResult<_, _>) : AsyncResult<_, _> = Async.map (Result.mapError f) x
+    let inline ignore x = x |> map ignore
 
-    let retn x : AsyncResult<_, _> = x |> Result.Ok |> Async.retn
+    let inline retn x : AsyncResult<_, _> = x |> Result.Ok |> Async.retn
 
     /// Handles asynchronous exceptions and maps them into Failure cases using the provided function
-    let catch f (x: AsyncResult<_, _>) : AsyncResult<_, _> =
+    let inline catch f (x: AsyncResult<_, _>) : AsyncResult<_, _> =
         x
         |> Async.Catch
         |> Async.map (
@@ -24,22 +24,22 @@ module AsyncResult =
         )
 
     /// Apply an AsyncResult function to an AsyncResult value, monadically
-    let applyM (fAsyncResult: AsyncResult<_, _>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> =
+    let inline applyM (fAsyncResult: AsyncResult<_, _>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> =
         fAsyncResult |> Async.bind (fun fResult -> xAsyncResult |> Async.map (fun xResult -> Result.apply fResult xResult))
 
     /// Apply an AsyncResult function to an AsyncResult value, applicatively
-    let applyA (fAsyncResult: AsyncResult<_, _>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> =
+    let inline applyA (fAsyncResult: AsyncResult<_, _>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> =
         fAsyncResult |> Async.bind (fun fResult -> xAsyncResult |> Async.map (fun xResult -> Validation.apply fResult xResult))
 
     /// Apply a monadic function to an AsyncResult value
-    let bind (f: 'a -> AsyncResult<'b, 'c>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> = async {
+    let inline bind (f: 'a -> AsyncResult<'b, 'c>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> = async {
         let! xResult = xAsyncResult
         match xResult with
         | Ok x -> return! f x
         | Error err -> return (Error err)
     }
 
-    let bindError (f: _ -> Async<_>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> = async {
+    let inline bindError (f: _ -> Async<_>) (xAsyncResult: AsyncResult<_, _>) : AsyncResult<_, _> = async {
         let! xResult = xAsyncResult
         match xResult with
         | Ok x -> return Ok x
@@ -71,28 +71,28 @@ module AsyncResult =
         List.foldBack consR resultList initialValue
 
     /// Lift a value into an Ok inside a AsyncResult
-    let ofSuccess x : AsyncResult<_, _> = x |> Result.Ok |> Async.retn
+    let inline ofSuccess x : AsyncResult<_, _> = x |> Result.Ok |> Async.retn
 
     /// Lift a value into an Error inside a AsyncResult
-    let ofError x : AsyncResult<_, _> = x |> Result.Error |> Async.retn
+    let inline ofError x : AsyncResult<_, _> = x |> Result.Error |> Async.retn
 
     /// Lift a Result into an AsyncResult
-    let ofResult x : AsyncResult<_, _> = x |> Async.retn
+    let inline ofResult x : AsyncResult<_, _> = x |> Async.retn
 
     /// Lift a Async into an AsyncResult
-    let ofAsync x : AsyncResult<_, _> = x |> Async.map Result.Ok
+    let inline ofAsync x : AsyncResult<_, _> = x |> Async.map Result.Ok
 
 #if !FABLE_COMPILER
-    let ofTask x : AsyncResult<_, _> = x |> Async.AwaitTask |> ofAsync
+    let inline ofTask x : AsyncResult<_, _> = x |> Async.AwaitTask |> ofAsync
 #endif
 
-    let sleep (ms: int) = Async.Sleep ms |> ofAsync
+    let inline sleep (ms: int) = Async.Sleep ms |> ofAsync
 
-    let bindAsync f x = x |> ofAsync |> bind f
+    let inline bindAsync f x = x |> ofAsync |> bind f
 
-    let mapAsync f x = x |> ofAsync |> map f
+    let inline mapAsync f x = x |> ofAsync |> map f
 
-    let pass f =
+    let inline pass f =
         map (fun x ->
             f
             x
@@ -101,27 +101,27 @@ module AsyncResult =
 [<AutoOpen>]
 module AsyncResultComputationExpression =
     type AsyncResultBuilder() =
-        member __.Return(x) = AsyncResult.retn x
-        member __.Bind(x, f) = AsyncResult.bind f x
-        member __.ReturnFrom(x) = x
-        member this.Zero() = this.Return()
-        member __.Delay(f) = f
-        member __.Run(f) = f ()
+        member inline __.Return(x) = AsyncResult.retn x
+        member inline __.Bind(x, f) = AsyncResult.bind f x
+        member inline __.ReturnFrom(x) = x
+        member inline this.Zero() = this.Return()
+        member inline __.Delay(f) = f
+        member inline __.Run(f) = f ()
 
-        member this.While(guard, body) =
+        member this.While(guard, body: unit -> AsyncResult<unit, _>) =
             if not (guard ()) then
                 this.Zero()
             else
                 this.Bind(body (), (fun () -> this.While(guard, body)))
 
-        member this.TryWith(body, handler) = async {
+        member inline this.TryWith(body, handler) = async {
             try
                 return! this.ReturnFrom(body ())
             with e ->
                 return! handler e
         }
 
-        member this.TryFinally(body, compensation) =
+        member inline this.TryFinally(body, compensation) =
             this.ReturnFrom(body ())
             |> Async.Catch
             |> Async.map (
@@ -134,7 +134,7 @@ module AsyncResultComputationExpression =
                     raise ex
             )
 
-        member this.Using(disposable: #System.IDisposable, body) =
+        member inline this.Using(disposable: #System.IDisposable, body) =
             let body' = fun () -> body disposable
             this.TryFinally(
                 body',
@@ -144,9 +144,9 @@ module AsyncResultComputationExpression =
                     | disp -> disp.Dispose()
             )
 
-        member this.For(sequence: seq<_>, body) =
+        member inline this.For(sequence: seq<_>, body) =
             this.Using(sequence.GetEnumerator(), (fun enum -> this.While(enum.MoveNext, this.Delay(fun () -> body enum.Current))))
-        member this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
+        member inline this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
 
     let asyncResult = AsyncResultBuilder()
 
@@ -154,19 +154,19 @@ module AsyncResultComputationExpression =
 module AsyncResultOptionComputationExpression =
     type AsyncResultOptionBuilder() =
 
-        member __.Return(x) = x |> Some |> AsyncResult.retn
+        member inline __.Return(x) = x |> Some |> AsyncResult.retn
 
-        member __.ReturnFrom(x) = x
+        member inline __.ReturnFrom(x) = x
 
-        member __.Bind(x, f) = asyncResult {
+        member inline __.Bind(x, f) = asyncResult {
             match! x with
             | Some x -> return! f x
             | None -> return None
         }
 
-        member this.Zero() = this.Return()
-        member __.Delay(f) = f
-        member __.Run(f) = f ()
+        member inline this.Zero() = this.Return()
+        member inline __.Delay(f) = f
+        member inline __.Run(f) = f ()
 
         member this.While(guard, body) =
             if not (guard ()) then
@@ -174,21 +174,21 @@ module AsyncResultOptionComputationExpression =
             else
                 this.Bind(body (), (fun () -> this.While(guard, body)))
 
-        member this.TryWith(body, handler) = async {
+        member inline this.TryWith(body, handler) = async {
             try
                 return! this.ReturnFrom(body ())
             with e ->
                 return! handler e
         }
 
-        member this.TryFinally(body, compensation) = async {
+        member inline this.TryFinally(body, compensation) = async {
             try
                 return! this.ReturnFrom(body ())
             finally
                 compensation ()
         }
 
-        member this.Using(disposable: #System.IDisposable, body) =
+        member inline this.Using(disposable: #System.IDisposable, body) =
             let body' = fun () -> body disposable
             this.TryFinally(
                 body',
@@ -198,9 +198,9 @@ module AsyncResultOptionComputationExpression =
                     | disp -> disp.Dispose()
             )
 
-        member this.For(sequence: seq<_>, body) =
+        member inline this.For(sequence: seq<_>, body) =
             this.Using(sequence.GetEnumerator(), (fun enum -> this.While(enum.MoveNext, this.Delay(fun () -> body enum.Current))))
 
-        member this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
+        member inline this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
 
     let asyncResultOption = AsyncResultOptionBuilder()

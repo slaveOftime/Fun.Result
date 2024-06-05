@@ -21,11 +21,11 @@
     <Compile Include="Result.fs" />
     <Compile Include="Option.fs" />
     <Compile Include="Validation.fs" />
+    <Compile Include="Deferred.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="AsyncResult.fs" />
     <Compile Include="Task.fs" />
     <Compile Include="TaskResult.fs" />
-    <Compile Include="Deferred.fs" />
     <!-- Add source files to "fable" folder in Nuget package -->
     <Content Include="*.fsproj; **\*.fs" PackagePath="fable\" />
   </ItemGroup>

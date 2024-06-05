@@ -3,20 +3,20 @@ namespace Fun.Result
 
 [<RequireQualifiedAccess>]
 module Result =
-    let bimap onSuccess onError xR =
+    let inline bimap onSuccess onError xR =
         match xR with
         | Ok x -> onSuccess x
         | Error err -> onError err
 
-    let map = Result.map
-    let mapError = Result.mapError
+    let inline map x = Result.map x
+    let inline mapError x = Result.mapError x
 
-    let bind = Result.bind
+    let inline bind x = Result.bind x
 
-    let iter (f: _ -> unit) result = map f result |> ignore
+    let inline iter (f: _ -> unit) result = map f result |> ignore
 
     /// Apply a Result<fn> to a Result<x> monadically
-    let apply fR xR =
+    let inline apply fR xR =
         match fR, xR with
         | Ok f, Ok x -> Ok(f x)
         | Error err1, Ok _ -> Error err1
@@ -52,65 +52,65 @@ module Result =
         f <!> x1 <*> x2 <*> x3 <*> x4
 
     /// Apply a monadic function with two parameters
-    let bind2 f x1 x2 = lift2 f x1 x2 |> bind id
+    let inline bind2 f x1 x2 = lift2 f x1 x2 |> bind id
 
     /// Apply a monadic function with three parameters
-    let bind3 f x1 x2 x3 = lift3 f x1 x2 x3 |> bind id
+    let inline bind3 f x1 x2 x3 = lift3 f x1 x2 x3 |> bind id
 
     /// Predicate that returns true on success
-    let isOk =
-        function
+    let inline isOk x =
+        match x with
         | Ok _ -> true
         | Error _ -> false
 
     /// Predicate that returns true on failure
-    let isError xR = xR |> isOk |> not
+    let inline isError xR = xR |> isOk |> not
 
     /// Lift a given predicate into a predicate that works on Results
-    let filter pred =
+    let inline filter pred =
         function
         | Ok x -> pred x
         | Error _ -> true
 
     /// On success, return the value. On error, return a default value
-    let ifError defaultVal =
+    let inline ifError defaultVal =
         function
         | Ok x -> x
         | Error _ -> defaultVal
 
     /// Apply a monadic function to an Result<x option>
-    let bindOption f xR =
+    let inline bindOption f xR =
         match xR with
         | Some x -> f x |> map Some
         | None -> Ok None
 
     /// Convert an Option into a Result. If none, use the passed-in errorValue
-    let ofOption errorValue opt =
+    let inline ofOption errorValue opt =
         match opt with
         | Some v -> Ok v
         | None -> Error errorValue
 
     /// Convert a Result into an Option
-    let toOption xR =
+    let inline toOption xR =
         match xR with
         | Ok v -> Some v
         | Error _ -> None
 
     /// Convert the Error case into an Option
     /// (useful with List.choose to find all errors in a list of Results)
-    let toErrorOption =
-        function
+    let inline toErrorOption x =
+        match x with
         | Ok _ -> None
         | Error err -> Some err
 
     /// Run a unit in the map pipeline without input
-    let pass f =
+    let inline pass f =
         map (fun x ->
             f
             x
         )
 
-    let catch errorMap f x =
+    let inline catch errorMap f x =
         try
             f x
         with ex ->
@@ -120,12 +120,12 @@ module Result =
 [<AutoOpen>]
 module ResultComputationExpression =
     type ResultBuilder() =
-        member __.Return(x) = Ok x
-        member __.Bind(x, f) = Result.bind f x
-        member __.ReturnFrom(x) = x
-        member this.Zero() = this.Return()
-        member __.Delay(f) = f
-        member __.Run(f) = f ()
+        member inline __.Return(x) = Ok x
+        member inline __.Bind(x, [<InlineIfLambda>] f) = Result.bind f x
+        member inline __.ReturnFrom(x) = x
+        member inline this.Zero() = this.Return()
+        member inline __.Delay(f) = f
+        member inline __.Run(f) = f ()
 
         member this.While(guard, body) =
             if not (guard ()) then
@@ -133,19 +133,19 @@ module ResultComputationExpression =
             else
                 this.Bind(body (), (fun () -> this.While(guard, body)))
 
-        member this.TryWith(body, handler) =
+        member inline this.TryWith(body, handler) =
             try
                 this.ReturnFrom(body ())
             with e ->
                 handler e
 
-        member this.TryFinally(body, compensation) =
+        member inline this.TryFinally(body, compensation) =
             try
                 this.ReturnFrom(body ())
             finally
                 compensation ()
 
-        member this.Using(disposable: #System.IDisposable, body) =
+        member inline this.Using(disposable: #System.IDisposable, body) =
             let body' = fun () -> body disposable
             this.TryFinally(
                 body',
@@ -155,8 +155,8 @@ module ResultComputationExpression =
                     | disp -> disp.Dispose()
             )
 
-        member this.For(sequence: seq<_>, body) =
+        member inline this.For(sequence: seq<_>, body) =
             this.Using(sequence.GetEnumerator(), (fun enum -> this.While(enum.MoveNext, this.Delay(fun () -> body enum.Current))))
-        member this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
+        member inline this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
 
     let result = new ResultBuilder()

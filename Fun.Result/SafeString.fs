@@ -6,20 +6,20 @@ open System
 [<AutoOpen>]
 module SafeStringDsl =
 
-    let (|NullOrEmptyString|SafeString|) str = if String.IsNullOrEmpty str then NullOrEmptyString else SafeString str
+    let inline (|NullOrEmptyString|SafeString|) str = if String.IsNullOrEmpty str then NullOrEmptyString else SafeString str
 
-    let (|SafeStringLower|_|) =
-        function
+    let inline (|SafeStringLower|_|) x =
+        match x with
         | SafeString x -> Some(x.ToLower())
         | NullOrEmptyString -> None
 
-    let (|SafeStringUpper|_|) =
-        function
+    let inline (|SafeStringUpper|_|) x =
+        match x with
         | SafeString x -> Some(x.ToUpper())
         | NullOrEmptyString -> None
 
-    let (|SafeStringExtension|_|) =
-        function
+    let inline (|SafeStringExtension|_|) x =
+        match x with
         | SafeString x ->
             let index = x.LastIndexOf '.'
             if index >= 0 && index < x.Length - 1 then
@@ -29,7 +29,7 @@ module SafeStringDsl =
         | NullOrEmptyString -> None
 
     /// Given the tail and extract the head
-    let (|SafeStringHead|_|) tail =
+    let inline (|SafeStringHead|_|) tail =
         function
         | SafeString x ->
             if String.IsNullOrEmpty tail |> not && x.EndsWith(tail, StringComparison.OrdinalIgnoreCase) then
@@ -39,7 +39,7 @@ module SafeStringDsl =
         | NullOrEmptyString -> None
 
     /// Given the head and extract the tail
-    let (|SafeStringTail|_|) head =
+    let inline (|SafeStringTail|_|) head =
         function
         | SafeString x ->
             if String.IsNullOrEmpty head |> not && x.StartsWith(head, StringComparison.OrdinalIgnoreCase) then
@@ -48,64 +48,60 @@ module SafeStringDsl =
                 None
         | NullOrEmptyString -> None
 
-    let (|SafeStringEndWith|_|) (ends: string) =
+    let inline (|SafeStringEndWith|_|) (ends: string) =
         function
         | SafeString x -> if x.EndsWith(ends) then Some() else None
         | NullOrEmptyString -> None
 
-    let (|SafeStringEndWithCi|_|) (ends: string) =
+    let inline (|SafeStringEndWithCi|_|) (ends: string) =
         function
         | SafeString x -> if x.EndsWith(ends, StringComparison.OrdinalIgnoreCase) then Some() else None
         | NullOrEmptyString -> None
 
-    let (|SafeStringStartWith|_|) (start: string) =
+    let inline (|SafeStringStartWith|_|) (start: string) =
         function
         | SafeString x -> if x.StartsWith(start) then Some() else None
         | NullOrEmptyString -> None
 
-    let (|SafeStringStartWithCi|_|) (start: string) =
+    let inline (|SafeStringStartWithCi|_|) (start: string) =
         function
         | SafeString x -> if x.StartsWith(start, StringComparison.OrdinalIgnoreCase) then Some() else None
         | NullOrEmptyString -> None
 
-    let (|INT32|_|) (str: string) =
+    let inline (|INT32|_|) (str: string) =
         match Int32.TryParse str with
         | true, x -> Some x
         | _ -> None
 
-    let (|INT64|_|) (str: string) =
+    let inline (|INT64|_|) (str: string) =
         match Int64.TryParse str with
         | true, x -> Some x
         | _ -> None
 
-    let (|FLOAT|_|) (str: string) =
-        try
-            Convert.ToDouble(str) |> Some
-        with _ ->
-            None
+    let inline (|FLOAT|_|) (str: string) =
+        match Double.TryParse(str) with
+        | true, x -> Some x
+        | _ -> None
 
-    let (|DECIMAL|_|) (str: string) =
-        try
-            Convert.ToDecimal(str) |> Some
-        with _ ->
-            None
+    let inline (|DECIMAL|_|) (str: string) =
+        match Decimal.TryParse(str) with
+        | true, x -> Some x
+        | _ -> None
 
-    let (|DATETIME|_|) (str: string) =
-        try
-            Convert.ToDateTime(str) |> Some
-        with _ ->
-            None
+    let inline (|DATETIME|_|) (str: string) =
+        match DateTime.TryParse(str) with
+        | true, x -> Some x
+        | _ -> None
 
-    let (|GUID|_|) (str: string) =
-        try
-            Guid.Parse(str) |> Some
-        with _ ->
-            None
+    let inline (|GUID|_|) (str: string) =
+        match Guid.TryParse(str) with
+        | true, x -> Some x
+        | _ -> None
 
 
 [<RequireQualifiedAccess>]
 module SafeString =
-    let toOption =
-        function
+    let inline toOption x =
+        match x with
         | SafeString x -> Some x
         | NullOrEmptyString -> None

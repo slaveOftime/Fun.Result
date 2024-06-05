@@ -10,32 +10,32 @@ type DeferredState<'T, 'Error> =
     | Reloading of 'T
     | ReloadFailed of 'T * 'Error
 
-    member this.Value =
+    member inline this.Value =
         match this with
         | DeferredState.Loaded x
         | DeferredState.Reloading x
         | DeferredState.ReloadFailed(x, _) -> Some x
         | _ -> None
 
-    member this.IsLoadingNow =
+    member inline this.IsLoadingNow =
         match this with
         | Loading
         | Reloading _ -> true
         | _ -> false
 
-    member this.Error =
+    member inline this.Error =
         match this with
         | LoadFailed e
         | ReloadFailed(_, e) -> Some e
         | _ -> None
 
-    member this.StartLoad() =
+    member inline this.StartLoad() =
         match this with
         | Loaded x
         | ReloadFailed(x, _) -> Reloading x
         | _ -> Loading
 
-    member this.WithError e =
+    member inline this.WithError e =
         match this with
         | Reloading x -> ReloadFailed(x, e)
         | _ -> LoadFailed e
@@ -53,14 +53,14 @@ module DeferredState =
         | DeferredState.Reloading x -> DeferredState.Reloading(fn x)
         | DeferredState.ReloadFailed(x, e) -> DeferredState.ReloadFailed(fn x, e)
 
-    let ofOption data =
+    let inline ofOption data =
         match data with
         | Some x -> DeferredState.Loaded x
         | None -> DeferredState.NotStartYet
 
-    let toOption (data: DeferredState<_, _>) = data.Value
+    let inline toOption (data: DeferredState<_, _>) = data.Value
 
-    let ofResult data =
+    let inline ofResult data =
         match data with
         | Ok x -> DeferredState.Loaded x
         | Error e -> DeferredState.LoadFailed e
@@ -76,23 +76,23 @@ type DeferredOperation<'T, 'Error> =
 [<RequireQualifiedAccess>]
 module DeferredOperation =
 
-    let map fn operation =
+    let inline map ([<InlineIfLambda>] fn) operation =
         match operation with
         | DeferredOperation.Start -> DeferredOperation.Start
         | DeferredOperation.Finished x -> DeferredOperation.Finished(fn x)
         | DeferredOperation.Failed e -> DeferredOperation.Failed e
 
-    let ofOption data =
+    let inline ofOption data =
         match data with
         | Some x -> DeferredOperation.Finished x
         | None -> DeferredOperation.Start
 
-    let toOption data =
+    let inline toOption data =
         match data with
         | DeferredOperation.Finished x -> Some x
         | _ -> None
 
-    let ofResult data =
+    let inline ofResult data =
         match data with
         | Ok x -> DeferredOperation.Finished x
         | Error e -> DeferredOperation.Failed e
@@ -105,13 +105,13 @@ type LoadingState<'T> =
     | Loaded of 'T
     | Reloading of 'T
 
-    member this.Value =
+    member inline this.Value =
         match this with
         | Loaded x
         | Reloading x -> Some x
         | _ -> None
 
-    member this.IsLoadingNow =
+    member inline this.IsLoadingNow =
         match this with
         | Loading
         | Reloading _ -> true
@@ -121,30 +121,30 @@ type LoadingState<'T> =
 [<RequireQualifiedAccess>]
 module LoadingState =
 
-    let map fn state =
+    let inline map ([<InlineIfLambda>] fn) state =
         match state with
         | LoadingState.NotStartYet -> LoadingState.NotStartYet
         | LoadingState.Loading -> LoadingState.Loading
         | LoadingState.Loaded x -> LoadingState.Loaded(fn x)
         | LoadingState.Reloading x -> LoadingState.Reloading(fn x)
 
-    let start state =
+    let inline start state =
         match state with
         | LoadingState.Loaded x
         | LoadingState.Reloading x -> LoadingState.Reloading x
         | _ -> LoadingState.Loading
 
-    let ofResult x =
+    let inline ofResult x =
         match x with
         | Ok x -> LoadingState.Loaded x
         | Error _ -> LoadingState.NotStartYet
 
-    let ofOption x =
+    let inline ofOption x =
         match x with
         | Some x -> LoadingState.Loaded x
         | None -> LoadingState.NotStartYet
 
-    let toOption x =
+    let inline toOption x =
         match x with
         | LoadingState.Loaded x
         | LoadingState.Reloading x -> Some x
@@ -152,7 +152,7 @@ module LoadingState =
         | LoadingState.Loading -> None
 
     /// Get the value and an indicator for isLoading
-    let unzip defaultValue x =
+    let inline unzip defaultValue x =
         match x with
         | LoadingState.Loaded x -> x, false
         | LoadingState.Reloading x -> x, true

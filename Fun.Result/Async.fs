@@ -2,12 +2,12 @@ namespace Fun.Result
 
 [<RequireQualifiedAccess>]
 module Async =
-    let map f xA = async {
+    let inline map f xA = async {
         let! x = xA
         return f x
     }
 
-    let mapOption f xA =
+    let inline mapOption f xA =
         xA
         |> map (
             function
@@ -15,18 +15,18 @@ module Async =
             | None -> None
         )
 
-    let retn x = async.Return x
+    let inline retn x = async.Return x
 
-    let apply fA xA = async {
+    let inline apply fA xA = async {
         let! fChild = Async.StartChild fA
         let! x = xA
         let! f = fChild
         return f x
     }
 
-    let bind f xA = async.Bind(xA, f)
+    let inline bind f xA = async.Bind(xA, f)
 
-    let bindOption f xA =
+    let inline bindOption f xA =
         xA
         |> bind (
             function
@@ -34,7 +34,7 @@ module Async =
             | None -> None |> retn
         )
 
-    let pass f =
+    let inline pass f =
         map (fun x ->
             f
             x
@@ -58,16 +58,16 @@ module Async =
 module AsyncOptionComputationExpression =
 
     type AsyncOptionBuilder() =
-        member __.Return(x) = x |> Some |> Async.retn
-        member __.ReturnFrom(x) = x
-        member __.Bind(x, f) = async {
+        member inline __.Return(x) = x |> Some |> Async.retn
+        member inline __.ReturnFrom(x) = x
+        member inline __.Bind(x, f) = async {
             match! x with
             | Some x -> return! f x
             | None -> return None
         }
-        member this.Zero() = this.Return()
-        member __.Delay(f) = f
-        member __.Run(f) = f ()
+        member inline this.Zero() = this.Return()
+        member inline __.Delay(f) = f
+        member inline __.Run(f) = f ()
 
         member this.While(guard, body) =
             if not (guard ()) then
@@ -75,21 +75,21 @@ module AsyncOptionComputationExpression =
             else
                 this.Bind(body (), (fun () -> this.While(guard, body)))
 
-        member this.TryWith(body, handler) = async {
+        member inline this.TryWith(body, handler) = async {
             try
                 return! this.ReturnFrom(body ())
             with e ->
                 return! handler e
         }
 
-        member this.TryFinally(body, compensation) = async {
+        member inline this.TryFinally(body, compensation) = async {
             try
                 return! this.ReturnFrom(body ())
             finally
                 compensation ()
         }
 
-        member this.Using(disposable: #System.IDisposable, body) =
+        member inline this.Using(disposable: #System.IDisposable, body) =
             let body' = fun () -> body disposable
             this.TryFinally(
                 body',
@@ -99,8 +99,8 @@ module AsyncOptionComputationExpression =
                     | disp -> disp.Dispose()
             )
 
-        member this.For(sequence: seq<_>, body) =
+        member inline this.For(sequence: seq<_>, body) =
             this.Using(sequence.GetEnumerator(), (fun enum -> this.While(enum.MoveNext, this.Delay(fun () -> body enum.Current))))
-        member this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
+        member inline this.Combine(a, b) = this.Bind(a, (fun () -> b ()))
 
     let asyncOption = AsyncOptionBuilder()
